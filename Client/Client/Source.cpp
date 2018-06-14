@@ -11,6 +11,8 @@ using nlohmann::json;
 
 
 namespace {
+
+	// Resizable buffer
 	::std::vector<uint8_t> buffer;
 
 	json build_function_string(const json& function) {
@@ -44,6 +46,7 @@ namespace {
 		return command;
 	}
 
+	// Wrapper to hold Server class information
 	struct ClassInfo {
 		size_t size;
 		::std::string name;
@@ -54,6 +57,7 @@ namespace {
 		}
 	};
 
+	// Wrapper to hold Object data
 	struct ClientObject {
 		::std::string object_name;
 		::std::vector<uint8_t> data;
@@ -80,6 +84,8 @@ namespace {
 		::std::tuple<bool, OVERLAPPED, ::std::string> overlapped_info;
 	public:
 		const HANDLE pipe;
+
+		PipeConnection() = delete;
 
 		PipeConnection(const char* name) : pipe(CreateFile(TEXT("\\\\.\\pipe\\Pipe"),
 			GENERIC_READ | GENERIC_WRITE,
@@ -120,10 +126,16 @@ namespace {
 			::std::get<0>(overlapped_info) = true;
 		}
 
-		bool is_open() const {
-			return pipe != INVALID_HANDLE_VALUE;
-		}
+		// Explicitly deleting move/copy assignment op/ctors.
 
+		PipeConnection(PipeConnection&) = delete;
+		PipeConnection& operator=(const PipeConnection&) = delete;
+
+		PipeConnection(PipeConnection&&) = delete;
+		PipeConnection& operator=(PipeConnection&&) = delete;
+
+
+		// Main loop of client
 		bool run() {
 			buffer.resize(1024);
 

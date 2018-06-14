@@ -25,6 +25,7 @@ namespace {
 			y += by_y;
 		}
 
+		// Complex math :D
 		float slow_add() {
 			Sleep(2000);
 			float sum = 0.0f;
@@ -65,7 +66,7 @@ namespace {
 
 	};
 
-
+	// Defined as template function to allow extensibility
 	template <typename T>
 	json get_meta() {}
 
@@ -81,12 +82,16 @@ namespace {
 		return meta;
 	}
 
+	// Resizable buffer
 	::std::vector<uint8_t> buffer;
 
 	class NamedPipe {
 	public:
 		const HANDLE pipe;
 
+		NamedPipe() = delete;
+
+		// Throw if pipe is not created.
 		NamedPipe(const char* name) : pipe(CreateNamedPipe("\\\\.\\pipe\\Pipe", 
 			PIPE_ACCESS_DUPLEX | 
 			FILE_FLAG_OVERLAPPED, 
@@ -97,6 +102,15 @@ namespace {
 			}
 		}
 
+		// Explicitly deleting move/copy assignment op/ctors.
+
+		NamedPipe(const NamedPipe&) = delete;
+		NamedPipe& operator=(const NamedPipe&) = delete;
+
+		NamedPipe(NamedPipe&&) = delete;
+		NamedPipe& operator=(NamedPipe&&) = delete;
+
+		// Main loop of server
 		void handle_connection() {
 			if (ConnectNamedPipe(pipe, NULL) != FALSE) {
 				DWORD bytes_read;
