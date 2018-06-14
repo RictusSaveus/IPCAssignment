@@ -92,7 +92,7 @@ namespace {
 		NamedPipe() = delete;
 
 		// Throw if pipe is not created.
-		NamedPipe(const char* name) : pipe(CreateNamedPipe("\\\\.\\pipe\\Pipe", 
+		NamedPipe(const char* name) : pipe(CreateNamedPipe(name, 
 			PIPE_ACCESS_DUPLEX | 
 			FILE_FLAG_OVERLAPPED, 
 			PIPE_TYPE_BYTE | PIPE_READMODE_BYTE, 

@@ -87,7 +87,7 @@ namespace {
 
 		PipeConnection() = delete;
 
-		PipeConnection(const char* name) : pipe(CreateFile(TEXT("\\\\.\\pipe\\Pipe"),
+		PipeConnection(const char* name) : pipe(CreateFile(name,
 			GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL,
