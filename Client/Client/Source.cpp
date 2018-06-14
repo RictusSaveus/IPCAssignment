@@ -188,12 +188,17 @@ namespace {
 					::std::cout << type.name << "\n";
 				}
 
+				::std::cout << "Enter desired type\n";
 				::std::string requested_type;
 				::std::cin >> requested_type;
 
 				ClassInfo key;
 				key.name = requested_type;
-				const auto& type = types.find(key);
+				auto it_type = types.find(key);
+
+				if (it_type == ::std::end(types)) {
+					return true;
+				}
 
 				::std::cout << "Enter name of new object\n";
 				::std::string obj_name;
@@ -207,10 +212,10 @@ namespace {
 				if (WriteFile(pipe, request_bytes.data(), request_bytes.size(), NULL, NULL)) {
 
 					ClientObject obj;
-					obj.data.resize(type->size);
+					obj.data.resize(it_type->size);
 					obj.object_name = obj_name;
 
-					if (ReadFile(pipe, obj.data.data(), type->size, NULL, NULL)) {
+					if (ReadFile(pipe, obj.data.data(), it_type->size, NULL, NULL)) {
 						objects[key].push_back(::std::move(obj));
 						::std::cout << "Object created\n";
 					}
@@ -232,7 +237,6 @@ namespace {
 				::std::cout << "Enter type\n";
 				::std::string requested_type;
 				::std::cin >> requested_type;
-
 
 				ClassInfo key;
 				key.name = requested_type;
